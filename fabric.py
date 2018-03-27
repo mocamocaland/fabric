@@ -21,7 +21,7 @@ PYPI_URL = 'http://devpi.webxample.example.com'
 |---0.1.0
 |---current -> 0.1.0/
 
-REMOTE_PROJECT_LOCATION = "/var/projects//webxample"
+REMOTE_PROJECT_LOCATION = "/var/projects/webxample"
 
 env.project_location = REMOTE_PROJECT_LOCATION
 
@@ -31,8 +31,8 @@ env.roledefs = {
         'staging.webxample.example.com',
     ],
     'production': [
-        'prod1.webexample.example.com',
-        'prod2.webexample.example.com',
+        'prod1.webxample.example.com',
+        'prod2.webxample.example.com',
     ],
 }
 
@@ -90,7 +90,7 @@ def deploy():
 
     if not exists(REMOTE_PROJECT_LOCATION):
         # 起動直後のホストに初めてデプロイする場合、ディレクトリがない
-        run("mkdir -p {}.format(REMOTEPROJECT_LOCATION))
+        run("mkdir -p {}.format(REMOTE_PROJECT_LOCATION))
     
     with cd(REMOTE_PROJECT_LOCATION):
         # 新しい仮想環境venvで作る
@@ -103,5 +103,5 @@ def deploy():
 
     switch_versions(version)
     # Circusをプロセス監視ツールとして使っていると仮定
-    run('circusctl restart webexample')
+    run('circusctl restart webxample')
 
