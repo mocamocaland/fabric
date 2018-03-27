@@ -65,3 +65,43 @@ def switch_versions(version):
         "".format(tårget=new_version_path, symlink=temporary)
     )
 
+    # mv -T によってこの操作をアトミックに行います
+    run ("mv -Tf {source} {destination}"
+        "".format(source=temporary, destination=desired))
+
+
+@task
+def uptime():
+    """
+    uptimeコマンドをリモートホストで実行し、接続を検証します。
+    """
+    run("uptime")
+
+
+@task
+def deploy():
+    """ パッケージを作成してアプリケーションをデプロイします """
+    version = get_version()
+    pip_path = os.path.join(
+            REMOTE_PROJECT_LOCATION, version, 'bin', 'pip'
+    )
+
+    prepare_release()
+
+    if not exists(REMOTE_PROJECT_LOCATION):
+        # 起動直後のホストに初めてデプロイする場合、ディレクトリがない
+        run("mkdir -p {}.format(REMOTEPROJECT_LOCATION))
+    
+    with cd(REMOTE_PROJECT_LOCATION):
+        # 新しい仮想環境venvで作る
+        run('python3 -m venv {}'.format(version))
+
+        run("{} install webexample=={} --index-url {}".format(
+            pip_path, version, PYPI_URL
+        ))
+
+
+    switch_versions(version)
+    # Circusをプロセス監視ツールとして使っていると仮定
+    run('circusctl restart webexample')
+
